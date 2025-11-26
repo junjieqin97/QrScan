@@ -1,32 +1,19 @@
-//
-//  QrScanApp.swift
-//  QrScan
-//
-//  Created by Junjie Qin on 2025/11/26.
-//
-
 import SwiftUI
-import SwiftData
 
 @main
 struct QrScanApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @State private var openScanner: Bool = false
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(showScanner: $openScanner)
+                .onContinueUserActivity("org.qin.DevTools.scan") { _ in
+                    openScanner = true
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .openScannerShortcut)) { _ in
+                    openScanner = true
+                }
         }
-        .modelContainer(sharedModelContainer)
     }
 }

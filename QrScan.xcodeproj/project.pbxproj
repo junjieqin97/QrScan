@@ -29,9 +29,22 @@
 		FACC1C172ED72F9500E31530 /* QrScanUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QrScanUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		FACC1C7A2ED7393300E31530 /* Exceptions for "QrScan" folder in "QrScan" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = FACC1BFD2ED72F9300E31530 /* QrScan */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		FACC1C002ED72F9300E31530 /* QrScan */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				FACC1C7A2ED7393300E31530 /* Exceptions for "QrScan" folder in "QrScan" target */,
+			);
 			path = QrScan;
 			sourceTree = "<group>";
 		};
@@ -399,7 +412,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8QKJD4CQTN;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QrScan/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -410,7 +424,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.QrScan;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example3636.QrScan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -431,7 +445,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8QKJD4CQTN;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QrScan/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -442,7 +457,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.QrScan;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example3636.QrScan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -464,7 +479,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.QrScanTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example3636.QrScanTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -486,7 +501,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.QrScanTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example3636.QrScanTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -506,7 +521,7 @@
 				DEVELOPMENT_TEAM = 8QKJD4CQTN;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.QrScanUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example3636.QrScanUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -526,7 +541,7 @@
 				DEVELOPMENT_TEAM = 8QKJD4CQTN;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.QrScanUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example3636.QrScanUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
