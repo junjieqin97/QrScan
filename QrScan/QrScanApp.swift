@@ -8,8 +8,10 @@ struct QrScanApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(showScanner: $openScanner)
-                .onContinueUserActivity("org.qin.DevTools.scan") { _ in
-                    openScanner = true
+                .onAppear {
+                    if ShortcutActionState.shared.consumePendingOpenScannerOnLaunch() {
+                        openScanner = true
+                    }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .openScannerShortcut)) { _ in
                     openScanner = true
