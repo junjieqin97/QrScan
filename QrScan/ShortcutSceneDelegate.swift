@@ -1,16 +1,19 @@
 import UIKit
 import Foundation
 
+enum ShortcutAction {
+    static let scanType = "com.example3636.QrScan.scan"
+}
+
 final class ShortcutActionState {
     static let shared = ShortcutActionState()
-    private let scanShortcutType = "com.example3636.QrScan.scan"
     private var pendingOpenScannerOnLaunch = false
 
     private init() {}
 
     @discardableResult
     func markPendingOpenScannerIfNeeded(shortcutItem: UIApplicationShortcutItem?) -> Bool {
-        guard let shortcutItem, shortcutItem.type == scanShortcutType else {
+        guard let shortcutItem, shortcutItem.type == ShortcutAction.scanType else {
             return false
         }
         pendingOpenScannerOnLaunch = true
@@ -19,7 +22,7 @@ final class ShortcutActionState {
 
     @discardableResult
     func handleRuntimeShortcut(_ shortcutItem: UIApplicationShortcutItem) -> Bool {
-        guard shortcutItem.type == scanShortcutType else {
+        guard shortcutItem.type == ShortcutAction.scanType else {
             return false
         }
         NotificationCenter.default.post(name: .openScannerShortcut, object: nil)

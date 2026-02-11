@@ -4,14 +4,16 @@ import Vision
 import Photos
 
 struct ScannerView: UIViewControllerRepresentable {
+    let language: AppLanguage
     var completion: (String?) -> Void
-    
+
     func makeUIViewController(context: Context) -> ScannerViewController {
         let vc = ScannerViewController()
+        vc.language = language
         vc.completion = completion
         return vc
     }
-    
+
     func updateUIViewController(_ uiViewController: ScannerViewController, context: Context) {}
 }
 
@@ -19,13 +21,18 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
     var session: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     var torchButton: UIButton?
+    var language: AppLanguage = .en
     var completion: ((String?) -> Void)?
-    
+
+    private func t(_ key: String) -> String {
+        L10n.tr(key, language: language)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
         session = AVCaptureSession()
-        
+
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {
             complete(nil)
             return
@@ -44,9 +51,9 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
         session.startRunning()
-        // 添加取消按钮
+
         let cancelButton = UIButton(type: .system)
-        cancelButton.setTitle("取消", for: .normal)
+        cancelButton.setTitle(t("scanner.cancel"), for: .normal)
         cancelButton.setTitleColor(.white, for: .normal)
         cancelButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         cancelButton.layer.cornerRadius = 6
@@ -59,9 +66,9 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
             cancelButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 64),
             cancelButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-        // 添加相册按钮（右下角）
+
         let albumButton = UIButton(type: .system)
-        albumButton.setTitle("相册", for: .normal)
+        albumButton.setTitle(t("scanner.album"), for: .normal)
         albumButton.setTitleColor(.white, for: .normal)
         albumButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         albumButton.layer.cornerRadius = 6
@@ -74,9 +81,9 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
             albumButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 64),
             albumButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-        // 添加手电按钮（左下角）
+
         let tButton = UIButton(type: .system)
-        tButton.setTitle("手电", for: .normal)
+        tButton.setTitle(t("scanner.torch.off"), for: .normal)
         tButton.setTitleColor(.white, for: .normal)
         tButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         tButton.layer.cornerRadius = 6
@@ -91,7 +98,7 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
         ])
         self.torchButton = tButton
     }
-    
+
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         session.stopRunning()
         if let object = metadataObjects.first as? AVMetadataMachineReadableCodeObject, object.type == .qr, let string = object.stringValue {
@@ -100,20 +107,18 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
             complete(nil)
         }
     }
-    
+
     @objc func cancelTapped() {
         complete(nil)
     }
-    
+
     func complete(_ value: String?) {
         completion?(value)
         dismiss(animated: true)
     }
 
-    // MARK: - 相册选择与识别
     @objc func openPhotoLibrary() {
         guard UIImagePickerController.isSourceTypeAvailable(.photoLibrary) else { return }
-        // 暂停相机会话，释放摄像头占用
         if session.isRunning { session.stopRunning() }
         let picker = UIImagePickerController()
         picker.sourceType = .photoLibrary
@@ -151,14 +156,16 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
                 return
             }
             DispatchQueue.main.async {
-                // 未识别到二维码：恢复相机并提示用户
                 if !(self.session.isRunning) { self.session.startRunning() }
-                let alert = UIAlertController(title: "未识别到二维码", message: "请选择其他图片或使用相机扫描。", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "确定", style: .default, handler: nil))
+                let alert = UIAlertController(
+                    title: self.t("scanner.no_qr.title"),
+                    message: self.t("scanner.no_qr.message"),
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: self.t("action.ok"), style: .default, handler: nil))
                 self.present(alert, animated: true)
             }
         }
-        // 限定识别类型为 QRCode 可以提高效率
         request.symbologies = [.QR]
         let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         DispatchQueue.global(qos: .userInitiated).async {
@@ -173,28 +180,35 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
         }
     }
 
-    // MARK: - 手电筒
     @objc func toggleFlashlight() {
         guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
         do {
             try device.lockForConfiguration()
             if device.torchMode == .on {
                 device.torchMode = .off
-                DispatchQueue.main.async { self.torchButton?.setTitle("手电", for: .normal) }
+                DispatchQueue.main.async {
+                    self.torchButton?.setTitle(self.t("scanner.torch.off"), for: .normal)
+                }
             } else {
                 try device.setTorchModeOn(level: 1.0)
-                DispatchQueue.main.async { self.torchButton?.setTitle("手电•", for: .normal) }
+                DispatchQueue.main.async {
+                    self.torchButton?.setTitle(self.t("scanner.torch.on"), for: .normal)
+                }
             }
             device.unlockForConfiguration()
         } catch {
             DispatchQueue.main.async {
-                let alert = UIAlertController(title: "手电操作失败", message: "无法切换手电筒。", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "确定", style: .default, handler: nil))
+                let alert = UIAlertController(
+                    title: self.t("scanner.torch_error.title"),
+                    message: self.t("scanner.torch_error.message"),
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: self.t("action.ok"), style: .default, handler: nil))
                 self.present(alert, animated: true)
             }
         }
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         previewLayer?.frame = view.layer.bounds

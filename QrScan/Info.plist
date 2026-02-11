@@ -33,20 +33,20 @@
 		<string>armv7</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>本应用需要访问你的摄像头以实现二维码扫码功能。</string>
+	<string>This app needs access to your camera to scan QR codes.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>本应用需要向您的相册保存二维码图片。</string>
+	<string>This app needs access to your photo library to save QR code images.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>本应用需要访问你的相册以选择图片进行二维码识别。</string>
+	<string>This app needs access to your photo library to detect QR codes from images.</string>
 	<key>UIApplicationShortcutItems</key>
 	<array>
 		<dict>
 			<key>UIApplicationShortcutItemType</key>
 			<string>com.example3636.QrScan.scan</string>
 			<key>UIApplicationShortcutItemTitle</key>
-			<string>扫一扫</string>
+			<string>Scan QR</string>
 			<key>UIApplicationShortcutItemSubtitle</key>
-			<string>快速扫码</string>
+			<string>Quick scan</string>
 		</dict>
 	</array>
 </dict>
