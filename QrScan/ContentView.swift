@@ -190,55 +190,27 @@ struct ContentView: View {
 
                     Divider()
 
-                    HStack {
-                        Text(t("home.history.title"))
-                            .font(.headline)
-                        Spacer()
-                        Button(role: .destructive) {
+                    ScanHistorySection(
+                        title: t("home.history.title"),
+                        clearButtonTitle: t("action.clear"),
+                        copyButtonTitle: t("action.copy"),
+                        items: reversedHistory,
+                        visibleCopyIndex: $visibleCopyIndex,
+                        onClear: {
                             DispatchQueue.main.async {
                                 scanHistoryRaw = "[]"
                                 visibleCopyIndex = nil
                             }
-                        } label: {
-                            Label(t("action.clear"), systemImage: "trash")
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                    .padding(.top, 8)
-                    VStack(alignment: .leading, spacing: 8) {
-                        ForEach(reversedHistory.indices, id: \.self) { idx in
-                            let item = reversedHistory[idx]
-                            HStack(spacing: 12) {
-                                Text(item)
-                                    .lineLimit(2)
-                                    .truncationMode(.middle)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                if visibleCopyIndex == idx {
-                                    Button(t("action.copy")) {
-                                        UIPasteboard.general.string = item
-                                        showCopySuccess = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                            showCopySuccess = false
-                                        }
-                                        visibleCopyIndex = nil
-                                    }
-                                    .buttonStyle(.bordered)
-                                }
+                        },
+                        onCopy: { item in
+                            UIPasteboard.general.string = item
+                            showCopySuccess = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                showCopySuccess = false
                             }
-                            .padding(8)
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(6)
-                            .onTapGesture {
-                                withAnimation {
-                                    if visibleCopyIndex == idx {
-                                        visibleCopyIndex = nil
-                                    } else {
-                                        visibleCopyIndex = idx
-                                    }
-                                }
-                            }
+                            visibleCopyIndex = nil
                         }
-                    }
+                    )
                 }
                 .padding()
                 .safeAreaInset(edge: .top) {
