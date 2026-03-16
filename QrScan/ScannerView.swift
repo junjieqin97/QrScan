@@ -166,7 +166,7 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
                 self.present(alert, animated: true)
             }
         }
-        request.symbologies = [.QR]
+        request.symbologies = [.qr]
         let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         DispatchQueue.global(qos: .userInitiated).async {
             do {
