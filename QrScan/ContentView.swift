@@ -78,11 +78,11 @@ struct ContentView: View {
                         .padding(6)
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
                         .background(Color(.systemBackground))
-                        .onChange(of: scannedText) { newValue in
+                        .onChange(of: scannedText) { _, newValue in
                             generatedQRCode = generateQRCode(
                                 from: newValue, correctionLevel: qrCorrectionLevel)
                         }
-                        .onChange(of: qrCorrectionLevel) { newLevel in
+                        .onChange(of: qrCorrectionLevel) { _, newLevel in
                             generatedQRCode = generateQRCode(
                                 from: scannedText, correctionLevel: newLevel)
                         }
