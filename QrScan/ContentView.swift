@@ -27,7 +27,6 @@ struct ContentView: View {
     @State private var showSaveError = false
     @Binding var showScanner: Bool
     @State private var scannedText: String = ""
-    @AppStorage("devtools_scan_history") private var scanHistoryRaw: String = "[]"
     @State private var generatedQRCode: UIImage? = nil
     @State private var showCopySuccess = false
     @State private var showSaveSuccess = false
@@ -46,27 +45,8 @@ struct ContentView: View {
         self.appLanguage = appLanguage
     }
 
-    var reversedHistory: [String] { Array(scanHistory.reversed()) }
-
-    var scanHistory: [String] {
-        (try? JSONDecoder().decode([String].self, from: Data(scanHistoryRaw.utf8))) ?? []
-    }
-
     private func t(_ key: String) -> String {
         L10n.tr(key, language: appLanguage)
-    }
-
-    private func appendToHistory(_ text: String) {
-        DispatchQueue.main.async {
-            var history = scanHistory
-            history.append(text)
-            if history.count > 200 {
-                history = Array(history.suffix(200))
-            }
-            if let data = try? JSONEncoder().encode(history) {
-                scanHistoryRaw = String(data: data, encoding: .utf8) ?? "[]"
-            }
-        }
     }
 
     var body: some View {
@@ -194,14 +174,7 @@ struct ContentView: View {
                         title: t("home.history.title"),
                         clearButtonTitle: t("action.clear"),
                         copyButtonTitle: t("action.copy"),
-                        items: reversedHistory,
                         visibleCopyIndex: $visibleCopyIndex,
-                        onClear: {
-                            DispatchQueue.main.async {
-                                scanHistoryRaw = "[]"
-                                visibleCopyIndex = nil
-                            }
-                        },
                         onCopy: { item in
                             UIPasteboard.general.string = item
                             showCopySuccess = true
@@ -223,7 +196,7 @@ struct ContentView: View {
                     if let text = result, !text.isEmpty {
                         DispatchQueue.main.async {
                             scannedText = text
-                            appendToHistory(text)
+                            ScanHistoryStorage.append(text)
                         }
                     }
                 }
