@@ -13,6 +13,11 @@ This repository contains an iOS QR utility app built with SwiftUI and UIKit.
 - `QrScanUITests/`: UI automation tests using `XCTest`.
 - `QrScan.xcodeproj/`: project and build configuration.
 
+## UI design specifications
+
+- Read the UI design and layout in: [docs/ui.md](docs/ui.md).
+- You MUST update the UI design document whenever the project UI changes.
+
 ## Build, Test, and Development Commands
 
 - Read the build and run guide in: [docs/build.md](docs/build.md).
