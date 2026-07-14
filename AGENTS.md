@@ -1,5 +1,8 @@
 # Repository Guidelines
 
+## Basic Rules
+- All documents must be written in English.
+
 ## Project Structure & Module Organization
 This repository contains an iOS QR utility app built with SwiftUI and UIKit.
 
