@@ -2,7 +2,7 @@ import UIKit
 import Foundation
 
 enum ShortcutAction {
-    static let scanType = "com.example3636.QrScan.scan"
+    static let scanType = "com.github.QrScan.scan"
 }
 
 final class ShortcutActionState {
