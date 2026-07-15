@@ -318,18 +318,15 @@ Camera scanning and torch behavior should be manually verified on a physical dev
 
 ## 11. App icon generation
 
-`QrScan/icon/QrScanIcon.svg` is the source artwork. `QrScanIcon_svg_to_png.sh` invokes Bash, Inkscape, `bc`, and `awk` to generate multiple PNG sizes.
+`QrScan/icon/QrScanIcon.svg` is the source artwork. `QrScanIcon_svg_to_png.sh` invokes Bash, Inkscape, and Xcode's `pngcrush` to generate the opaque 1024-by-1024 PNG used by the modern single-size iOS App Icon catalog.
 
-The script resolves its input and output paths relative to its current working directory, so run it from `QrScan/icon`:
+The script resolves its paths from its own location, so it can be run directly from the repository root:
 
 ```sh
-(
-  cd QrScan/icon
-  bash QrScanIcon_svg_to_png.sh
-)
+bash QrScan/icon/QrScanIcon_svg_to_png.sh
 ```
 
-Generated PNG files under `QrScan/Assets.xcassets/AppIcon.appiconset/` are ignored by Git. In addition, the current `Contents.json` assigns filenames to only a subset of the declared icon slots. Consequently, a clean build may report missing required icon sizes and unassigned icon children. These are asset-catalog warnings rather than Swift compilation errors, but the icon set should be corrected before distribution.
+The generated `icon_1024x1024.png` is committed so clean checkouts include the application icon. `Contents.json` maps that file to the universal iOS 1024-by-1024 slot; Xcode derives the required device sizes during asset compilation. The script renders through an intermediate file and removes its alpha channel before replacing the committed PNG.
 
 The icon conversion script is optional and is not an Xcode build phase; normal builds never run Inkscape automatically.
 
@@ -338,7 +335,6 @@ The icon conversion script is optional and is not an Xcode build phase; normal b
 - The minimum OS is iOS 26.1. Older installed Simulators cannot be selected for this project.
 - A generic Simulator build can compile without signing, but installing/running an app or test bundle requires the normal local Simulator signature produced by a destination-specific build.
 - Physical-device builds require a valid development team, provisioning profile, and usually a team-owned unique bundle identifier.
-- The App Icon catalog currently emits missing/unassigned icon warnings as described above.
 - `Main.storyboard` is compiled but unused because the app starts through `QrScanApp` and the main storyboard name is empty.
 - `Item.swift` imports SwiftData, but no persistent SwiftData store is constructed. Scan history is stored only in `UserDefaults`.
 - Language selection is based on region (`CN`) rather than the preferred-language order.

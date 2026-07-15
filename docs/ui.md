@@ -199,7 +199,7 @@ The interface is intentionally native and restrained:
 
 The generated QR image itself remains black and white in either appearance, preserving scan contrast.
 
-The app icon is based on `QrScan/icon/QrScanIcon.svg`, a monochrome combination of QR modules and four scanner-corner marks. That motif is also reflected in the scan button and quick-action SF Symbol.
+The app icon is based on `QrScan/icon/QrScanIcon.svg`. It uses an opaque warm-white canvas, a near-black simplified QR tile, four scanner-corner marks, and a horizontal scan beam. A short neutral-gray card offset and beam shadow add restrained depth while keeping black and white as the dominant colors. The QR pattern is symbolic rather than scannable. The scanner motif is also reflected in the scan button and quick-action SF Symbol.
 
 ## 8. Localization
 

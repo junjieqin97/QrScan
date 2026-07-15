@@ -6,4 +6,3 @@ build/
 DerivedData/
 .derivedData/
 *.xcuserstate
-QrScan/Assets.xcassets/AppIcon.appiconset/*.png
