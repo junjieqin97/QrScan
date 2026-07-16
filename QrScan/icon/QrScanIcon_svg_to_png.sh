@@ -1,25 +1,35 @@
 #!/bin/bash
 
-# 定义常用 App Icon 尺寸（单位：像素）
-sizes=(20 29 40 60 76 83.5 1024)
-scales=(1 2 3)
+set -euo pipefail
 
-# SVG 文件名
-svg_file="QrScanIcon.svg"
-# 输出目录，与 SVG 同级
-outdir="../Assets.xcassets/AppIcon.appiconset"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+svg_file="${script_dir}/QrScanIcon.svg"
+outdir="${script_dir}/../Assets.xcassets/AppIcon.appiconset"
+output_file="${outdir}/icon_1024x1024.png"
+temporary_file="${outdir}/icon_1024x1024.with-alpha.png"
 
-for size in "${sizes[@]}"; do
-  for scale in "${scales[@]}"; do
-    # 计算输出像素实际尺寸
-    width=$(echo "$size * $scale" | bc | awk '{printf "%d", $0}')
-    height=$width
-    # 文件名拼装
-    filename="${outdir}/icon_${size}x${size}@${scale}x.png"
-    # 生成 PNG
-    inkscape --export-type=png "$svg_file" -o "$filename" -w $width -h $height
-    echo "生成：$filename"
-  done
-done
+command -v inkscape >/dev/null 2>&1 || {
+    echo "Error: Inkscape is required to render the app icon." >&2
+    exit 1
+}
 
-echo "全部尺寸生成完成！"
+command -v xcrun >/dev/null 2>&1 || {
+    echo "Error: Xcode command-line tools are required to remove PNG alpha." >&2
+    exit 1
+}
+
+mkdir -p "$outdir"
+
+inkscape \
+    --export-type=png \
+    --export-background="#F5F3EE" \
+    --export-background-opacity=255 \
+    "$svg_file" \
+    -o "$temporary_file" \
+    -w 1024 \
+    -h 1024
+
+xcrun pngcrush -q -rem alla "$temporary_file" "$output_file"
+rm "$temporary_file"
+
+echo "Generated: $output_file"

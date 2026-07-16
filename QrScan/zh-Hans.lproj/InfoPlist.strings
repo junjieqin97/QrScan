@@ -1,0 +1,5 @@
+"NSCameraUsageDescription" = "本应用需要访问你的摄像头以实现二维码扫码功能。";
+"NSPhotoLibraryAddUsageDescription" = "本应用需要向您的相册保存二维码图片。";
+"NSPhotoLibraryUsageDescription" = "本应用需要访问你的相册以选择图片进行二维码识别。";
+"UIApplicationShortcutItems.0.UIApplicationShortcutItemTitle" = "扫一扫";
+"UIApplicationShortcutItems.0.UIApplicationShortcutItemSubtitle" = "快速扫码";

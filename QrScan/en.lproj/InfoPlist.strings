@@ -1,0 +1,5 @@
+"NSCameraUsageDescription" = "This app needs access to your camera to scan QR codes.";
+"NSPhotoLibraryAddUsageDescription" = "This app needs access to your photo library to save QR code images.";
+"NSPhotoLibraryUsageDescription" = "This app needs access to your photo library to detect QR codes from images.";
+"UIApplicationShortcutItems.0.UIApplicationShortcutItemTitle" = "Scan QR";
+"UIApplicationShortcutItems.0.UIApplicationShortcutItemSubtitle" = "Quick scan";
