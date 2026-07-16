@@ -58,7 +58,7 @@ NavigationView
 
 The first element is an unlabeled `TextEditor` bound to the current QR payload.
 
-- Fixed height: 80 points.
+- Height: 140 points in a regular vertical size class and 100 points in a compact vertical size class.
 - Internal padding: 6 points.
 - Border: 1-point gray stroke with an 8-point corner radius.
 - Background: `systemBackground`, which adapts to light and dark appearance.
@@ -86,7 +86,7 @@ The picker has 16 points of trailing padding but no matching custom leading padd
 
 ### 4.3 QR preview
 
-The preview area is centered across the full available width and reserves a fixed 160-by-160-point square.
+The preview area is centered across the full available width. It reserves a 240-by-240-point square in a regular vertical size class and a 180-by-180-point square in a compact vertical size class.
 
 Empty state:
 
@@ -96,11 +96,11 @@ Empty state:
 
 Generated state:
 
-- The QR `UIImage` is resizable and aspect-fitted into the same 160-point square.
+- The QR `UIImage` is resizable and aspect-fitted into the same adaptive square as the empty state.
 - `.interpolation(.none)` keeps module edges sharp when the image is scaled.
 - A faint secondary background and 8-point corner radius visually separate the image from the page.
 
-The preview container adds 8 points of bottom padding before the action row. Its size does not grow on iPad or rotate into a different composition in landscape.
+The preview container adds 8 points of bottom padding before the action row. It switches to its compact size in iPhone landscape and other compact-height environments. iPad continues to use the regular size without an additional large-screen variant.
 
 ### 4.4 Primary action row
 
@@ -219,23 +219,23 @@ The current two languages use short labels that fit the three-button action row.
 
 The target supports iPhone and iPad. iPhone declares portrait and both landscape orientations; iPad also declares portrait upside down. The two pages each use a vertical `ScrollView`, which protects their content from short vertical space, while the enclosing `TabView` reserves horizontal gestures for page changes.
 
-The implementation has no size-class branches, maximum readable width, `ViewThatFits`, adaptive grid, or alternate iPad composition. As a result:
+The implementation uses the vertical size class only to adapt the editor and QR preview. It has no maximum readable width, `ViewThatFits`, adaptive grid, or alternate iPad composition. As a result:
 
 - The editor, segmented picker, and history rows stretch across large windows.
 - The generator and history keep independent vertical scroll positions while moving between pages.
 - The native page control stays at the bottom of the paged container, with content padding preventing overlap.
-- The QR preview remains fixed at 160 points and centered in the expanded width.
+- The editor and QR preview use 140/240 points in regular height and 100/180 points in compact height.
 - The primary actions remain one horizontal row.
 - The scanner buttons remain pinned to three safe-area corners.
 - Multitasking, compact landscape widths, long future translations, or large Dynamic Type sizes can compress the action row and segmented control.
 
 ### 9.2 Dynamic appearance and type
 
-Semantic backgrounds and standard controls adapt to light and dark appearance. System text styles participate in Dynamic Type, but several fixed dimensions constrain scaling: the editor is 80 points high, the preview is 160 points square, and scanner buttons are 40 points high. There is no explicit minimum scale factor or multiline policy for button labels.
+Semantic backgrounds and standard controls adapt to light and dark appearance. System text styles participate in Dynamic Type, while the editor and preview respond to vertical size class rather than text size. Scanner buttons remain 40 points high. There is no explicit minimum scale factor or multiline policy for button labels.
 
 ### 9.3 Accessibility surface
 
-The use of `Label` gives the three main actions both text and symbol content, and native buttons/pickers retain standard accessibility behavior. However, the project defines no accessibility identifiers, custom hints, or focused UI tests. The blank editor has no visible or explicit accessibility label, the QR preview has no custom accessibility description, and history-row expansion is attached to a general tap gesture without an explanatory affordance. These are current implementation characteristics rather than separate accessibility designs.
+The use of `Label` gives the three main actions both text and symbol content, and native buttons/pickers retain standard accessibility behavior. Stable identifiers cover the pager, generator editor, QR preview, history title, and clear action for UI testing. The blank editor still has no visible or explicit accessibility label, and history-row expansion is attached to a general tap gesture without an explanatory affordance. These are current implementation characteristics rather than separate accessibility designs.
 
 ## 10. Launch and external system UI
 

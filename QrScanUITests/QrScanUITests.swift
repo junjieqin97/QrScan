@@ -14,6 +14,7 @@ final class QrScanUITests: XCTestCase {
 
     @MainActor
     func testSwipeBetweenGeneratorAndHistoryPages() throws {
+        XCUIDevice.shared.orientation = .portrait
         let app = XCUIApplication()
         app.launch()
 
@@ -40,6 +41,35 @@ final class QrScanUITests: XCTestCase {
     }
 
     @MainActor
+    func testGeneratorUsesAdaptiveLayoutSizes() throws {
+        XCUIDevice.shared.orientation = .portrait
+        defer {
+            XCUIDevice.shared.orientation = .portrait
+        }
+
+        let app = XCUIApplication()
+        app.launch()
+
+        let editor = app.textViews["home.payload.editor"]
+        let qrPreview = app.descendants(matching: .any)["home.qr.preview"]
+
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        XCTAssertTrue(qrPreview.waitForExistence(timeout: 5))
+        waitUntilFrameMatches(qrPreview, width: 240, height: 240)
+        XCTAssertGreaterThanOrEqual(editor.frame.height, 140)
+        let portraitEditorHeight = editor.frame.height
+
+        XCUIDevice.shared.orientation = .landscapeLeft
+
+        waitUntilFrameMatches(qrPreview, width: 180, height: 180)
+        waitUntilHeightMatches(
+            editor,
+            minimumHeight: 100,
+            maximumHeight: portraitEditorHeight - 1
+        )
+    }
+
+    @MainActor
     func testLaunchPerformance() throws {
         // This measures how long it takes to launch your application.
         measure(metrics: [XCTApplicationLaunchMetric()]) {
@@ -51,6 +81,45 @@ final class QrScanUITests: XCTestCase {
     private func waitUntilHittable(_ element: XCUIElement, timeout: TimeInterval = 5) {
         let expectation = XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "exists == true AND hittable == true"),
+            object: element
+        )
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
+    }
+
+    @MainActor
+    private func waitUntilFrameMatches(
+        _ element: XCUIElement,
+        width: CGFloat,
+        height: CGFloat,
+        tolerance: CGFloat = 2,
+        timeout: TimeInterval = 5
+    ) {
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate { object, _ in
+                guard let element = object as? XCUIElement else { return false }
+
+                return abs(element.frame.width - width) <= tolerance
+                    && abs(element.frame.height - height) <= tolerance
+            },
+            object: element
+        )
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
+    }
+
+    @MainActor
+    private func waitUntilHeightMatches(
+        _ element: XCUIElement,
+        minimumHeight: CGFloat,
+        maximumHeight: CGFloat,
+        timeout: TimeInterval = 5
+    ) {
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate { object, _ in
+                guard let element = object as? XCUIElement else { return false }
+
+                return element.frame.height >= minimumHeight
+                    && element.frame.height <= maximumHeight
+            },
             object: element
         )
         XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)

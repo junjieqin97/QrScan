@@ -23,8 +23,9 @@ class PhotoSaveHelper: NSObject {
 struct ContentView: View {
     let appLanguage: AppLanguage
     private let photoSaveHelper = PhotoSaveHelper()
-    @State private var showSaveError = false
     @Binding var showScanner: Bool
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @State private var showSaveError = false
     @State private var scannedText: String = ""
     @State private var generatedQRCode: UIImage? = nil
     @State private var showCopySuccess = false
@@ -47,6 +48,14 @@ struct ContentView: View {
 
     private func t(_ key: String) -> String {
         L10n.tr(key, language: appLanguage)
+    }
+
+    private var textEditorHeight: CGFloat {
+        verticalSizeClass == .compact ? 100 : 140
+    }
+
+    private var qrPreviewSize: CGFloat {
+        verticalSizeClass == .compact ? 180 : 240
     }
 
     var body: some View {
@@ -77,7 +86,7 @@ struct ContentView: View {
         ScrollView {
             VStack(spacing: 16) {
                 TextEditor(text: $scannedText)
-                    .frame(height: 80)
+                    .frame(height: textEditorHeight)
                     .padding(6)
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
                     .background(Color(.systemBackground))
@@ -113,14 +122,18 @@ struct ContentView: View {
                             .resizable()
                             .interpolation(.none)
                             .scaledToFit()
-                            .frame(width: 160, height: 160)
+                            .frame(width: qrPreviewSize, height: qrPreviewSize)
                             .background(Color.secondary.opacity(0.1))
                             .cornerRadius(8)
+                            .accessibilityLabel(t("home.qr.preview"))
+                            .accessibilityIdentifier("home.qr.preview")
                     } else {
                         Rectangle()
-                            .frame(width: 160, height: 160)
+                            .frame(width: qrPreviewSize, height: qrPreviewSize)
                             .foregroundColor(Color.secondary.opacity(0.08))
                             .overlay(Text(t("home.qr.preview")).foregroundColor(.secondary))
+                            .accessibilityLabel(t("home.qr.preview"))
+                            .accessibilityIdentifier("home.qr.preview")
                     }
                 }
                 .frame(maxWidth: .infinity)
