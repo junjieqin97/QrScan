@@ -1,4 +1,0 @@
-interface:
-  display_name: "Git Commit Standardizer"
-  short_description: "按仓库约定生成规范 git 提交信息并执行安全提交流程"
-  default_prompt: "Use $git-commit-standardizer to analyze the current changes and produce a commit message that matches repository conventions."
