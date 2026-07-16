@@ -1,0 +1,29 @@
+"action.save" = "保存";
+"action.scan" = "扫描";
+"action.copy" = "复制";
+"action.clear" = "清空";
+"action.ok" = "确定";
+
+"home.history.title" = "历史记录";
+"home.qr.preview" = "二维码预览";
+"home.copy.success" = "复制成功!";
+"home.save.success" = "保存成功!";
+"home.save.failed" = "保存失败，请检查权限设置或重试";
+
+"home.correction.title" = "纠错级别：";
+"home.correction.low" = "低";
+"home.correction.medium" = "中";
+"home.correction.high" = "高";
+"home.correction.max" = "超高";
+
+"scanner.cancel" = "取消";
+"scanner.album" = "相册";
+"scanner.torch.off" = "手电";
+"scanner.torch.on" = "手电•";
+"scanner.no_qr.title" = "未识别到二维码";
+"scanner.no_qr.message" = "请选择其他图片或使用相机扫描。";
+"scanner.torch_error.title" = "手电操作失败";
+"scanner.torch_error.message" = "无法切换手电筒。";
+
+"shortcut.scan.title" = "扫一扫";
+"shortcut.scan.subtitle" = "快速扫码";

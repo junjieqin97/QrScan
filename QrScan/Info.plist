@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.example3636.QrScan</string>
+	<string>com.github.QrScan</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -15,9 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIMainStoryboardFile</key>
@@ -33,20 +33,20 @@
 		<string>armv7</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>本应用需要访问你的摄像头以实现二维码扫码功能。</string>
+	<string>This app needs access to your camera to scan QR codes.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>本应用需要向您的相册保存二维码图片。</string>
+	<string>This app needs access to your photo library to save QR code images.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>本应用需要访问你的相册以选择图片进行二维码识别。</string>
+	<string>This app needs access to your photo library to detect QR codes from images.</string>
 	<key>UIApplicationShortcutItems</key>
 	<array>
 		<dict>
 			<key>UIApplicationShortcutItemType</key>
-			<string>com.example3636.QrScan.scan</string>
+			<string>com.github.QrScan.scan</string>
 			<key>UIApplicationShortcutItemTitle</key>
-			<string>扫一扫</string>
+			<string>Scan QR</string>
 			<key>UIApplicationShortcutItemSubtitle</key>
-			<string>快速扫码</string>
+			<string>Quick scan</string>
 		</dict>
 	</array>
 </dict>

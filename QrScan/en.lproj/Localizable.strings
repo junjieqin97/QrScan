@@ -1,0 +1,29 @@
+"action.save" = "Save";
+"action.scan" = "Scan";
+"action.copy" = "Copy";
+"action.clear" = "Clear";
+"action.ok" = "OK";
+
+"home.history.title" = "History";
+"home.qr.preview" = "QR Preview";
+"home.copy.success" = "Copied!";
+"home.save.success" = "Saved!";
+"home.save.failed" = "Save failed. Check permissions or try again.";
+
+"home.correction.title" = "Error Correction:";
+"home.correction.low" = "Low";
+"home.correction.medium" = "Medium";
+"home.correction.high" = "High";
+"home.correction.max" = "Max";
+
+"scanner.cancel" = "Cancel";
+"scanner.album" = "Photos";
+"scanner.torch.off" = "Torch";
+"scanner.torch.on" = "Torch On";
+"scanner.no_qr.title" = "No QR Code Found";
+"scanner.no_qr.message" = "Please choose another photo or scan with camera.";
+"scanner.torch_error.title" = "Torch Error";
+"scanner.torch_error.message" = "Unable to toggle flashlight.";
+
+"shortcut.scan.title" = "Scan QR";
+"shortcut.scan.subtitle" = "Quick scan";
