@@ -38,10 +38,13 @@ struct ScanHistorySection: View {
     let title: String
     let clearButtonTitle: String
     let copyButtonTitle: String
+    let copySuccessMessage: String
     @Binding var visibleCopyIndex: Int?
     let onCopy: (String) -> Void
     @AppStorage(ScanHistoryStorage.storageKey) private var scanHistoryRaw: String =
         ScanHistoryStorage.emptyRawValue
+    @State private var isCopyConfirmationVisible = false
+    @State private var copyConfirmationTask: Task<Void, Never>?
 
     private var items: [String] {
         ScanHistoryStorage.reversedHistory(from: scanHistoryRaw)
@@ -52,16 +55,23 @@ struct ScanHistorySection: View {
             HStack {
                 Text(title)
                     .font(.headline)
+                    .accessibilityIdentifier("home.history.title")
                 Spacer()
                 Button(role: .destructive) {
-                    scanHistoryRaw = ScanHistoryStorage.emptyRawValue
-                    visibleCopyIndex = nil
+                    clearHistory()
                 } label: {
                     Label(clearButtonTitle, systemImage: "trash")
                 }
                 .buttonStyle(.bordered)
+                .accessibilityIdentifier("home.history.clear")
             }
             .padding(.top, 8)
+
+            if isCopyConfirmationVisible {
+                Text(copySuccessMessage)
+                    .foregroundColor(.green)
+                    .transition(.opacity)
+            }
 
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(items.indices, id: \.self) { index in
@@ -79,10 +89,38 @@ struct ScanHistorySection: View {
                             }
                         },
                         onCopy: {
-                            onCopy(items[index])
+                            copyItem(items[index])
                         }
                     )
                 }
+            }
+        }
+        .onDisappear {
+            copyConfirmationTask?.cancel()
+            isCopyConfirmationVisible = false
+        }
+    }
+
+    private func clearHistory() {
+        copyConfirmationTask?.cancel()
+        isCopyConfirmationVisible = false
+        scanHistoryRaw = ScanHistoryStorage.emptyRawValue
+        visibleCopyIndex = nil
+    }
+
+    private func copyItem(_ item: String) {
+        onCopy(item)
+        visibleCopyIndex = nil
+        copyConfirmationTask?.cancel()
+        withAnimation {
+            isCopyConfirmationVisible = true
+        }
+        copyConfirmationTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.5))
+            guard !Task.isCancelled else { return }
+
+            withAnimation {
+                isCopyConfirmationVisible = false
             }
         }
     }

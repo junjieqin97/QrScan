@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-QrScan uses a deliberately small, utility-oriented interface. The main workflow is kept on one vertically scrolling screen: enter or scan text, choose a QR error-correction level, inspect the generated QR code, then save or copy it. Scan history appears below the generator instead of in a separate tab or navigation destination.
+QrScan uses a deliberately small, utility-oriented interface. The root interface contains two horizontally paged screens: a default generator page and a history page immediately to its right. The generator keeps the primary workflow together, while a leftward swipe reveals scan history without adding a navigation destination or top tab bar.
 
 The UI is hybrid:
 
@@ -17,7 +17,7 @@ The application does not define a custom design system. It relies on system font
 | File                                                                | UI responsibility                                                                                                   |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `QrScan/QrScanApp.swift`                                            | Creates the window, injects the resolved locale, owns scanner presentation state, and handles scan quick actions.   |
-| `QrScan/ContentView.swift`                                          | Builds the main generator screen, QR preview, primary actions, feedback messages, and scanner sheet.                |
+| `QrScan/ContentView.swift`                                          | Builds the two-page container, generator screen, QR preview, primary actions, feedback, and scanner sheet.          |
 | `QrScan/ScanHistorySection.swift`                                   | Builds the history header and expandable copy rows.                                                                 |
 | `QrScan/ScannerView.swift`                                          | Bridges UIKit into SwiftUI and builds the camera/photo scanner UI.                                                  |
 | `QrScan/AppLanguage.swift`                                          | Selects English or Simplified Chinese and loads localized UI strings.                                               |
@@ -28,7 +28,7 @@ The application does not define a custom design system. It relies on system font
 
 ## 3. Application shell and presentation model
 
-`QrScanApp` creates one `WindowGroup` containing `ContentView`. The root view is wrapped in a `NavigationView`, but it has no navigation title, navigation buttons, or pushed destinations. Consequently, the visible interface behaves as a single-page utility rather than a navigation hierarchy.
+`QrScanApp` creates one `WindowGroup` containing `ContentView`. The root view is wrapped in a `NavigationView`, but it has no navigation title, navigation buttons, or pushed destinations. A page-styled `TabView` inside the navigation container provides two horizontally adjacent pages. The generator is selected at launch; swiping left opens the history page, and swiping right returns to the generator. A native page control with an always-visible background appears at the bottom.
 
 The scanner is presented with SwiftUI's `.sheet` modifier. Its exact modal chrome and detent behavior are therefore determined by the current iOS device and presentation environment. Inside that modal, the scanner controller fills all available sheet content.
 
@@ -36,20 +36,21 @@ The app can also enter the scanner directly from the **Scan QR** Home Screen qui
 
 ## 4. Main screen hierarchy
 
-The root content is a `ScrollView` containing a `VStack` with 16-point spacing and standard outer padding. An additional 8-point safe-area spacer is inserted at the top. There is no explicit maximum content width, so the stack expands with the window on iPad and in landscape.
+Each page owns an independent vertical `ScrollView`. The generator page contains a `VStack` with 16-point spacing and standard outer padding. Both pages add an 8-point safe-area spacer at the top and 32 points of bottom padding so scrollable content does not collide with the page control. There is no explicit maximum content width, so page content expands with the window on iPad and in landscape.
 
 The visible order is:
 
 ```text
 NavigationView
-└── ScrollView
-    └── VStack (16-point spacing, standard padding)
-        ├── Text editor
-        ├── Error-correction controls
-        ├── QR preview or empty placeholder
-        ├── Save / Scan / Copy action row
-        ├── Conditional status messages
-        ├── Divider
+└── TabView (horizontal page style with bottom page control)
+    ├── Generator ScrollView
+    │   └── VStack (16-point spacing, standard padding)
+    │       ├── Text editor
+    │       ├── Error-correction controls
+    │       ├── QR preview or empty placeholder
+    │       ├── Save / Scan / Copy action row
+    │       └── Conditional status messages
+    └── History ScrollView
         └── Scan history section
 ```
 
@@ -119,15 +120,15 @@ Save and Copy explicitly dismiss the keyboard before finishing. Save writes the 
 
 Status messages are inserted below the action row as separate conditional `Text` views:
 
-- **Copied!** in green for 2 seconds after copying the editor, or 1.5 seconds after copying a history item.
+- **Copied!** in green for 2 seconds after copying the editor.
 - **Saved!** in green for 2 seconds after a successful save.
 - A localized failure message in red for 2 seconds after a failed save.
 
-Each message adds 8 points of top padding. The views specify opacity transitions, but no explicit animation is attached to the state changes. More than one message can technically be visible at the same time because each status has independent state.
+Each message adds 8 points of top padding. The views specify opacity transitions, but no explicit animation is attached to the state changes. More than one message can technically be visible at the same time because each status has independent state. History-copy feedback is managed separately on the history page.
 
 ## 5. Scan history layout
 
-A divider separates the generator controls from the history section. The section remains visible even when it contains no rows; there is no dedicated empty-state message.
+The scan history occupies the second horizontal page instead of appearing below the generator. It has its own vertical scrolling position and remains present even when it contains no rows; there is no dedicated empty-state message. The page uses the same standard outer padding as the generator.
 
 ### 5.1 Header
 
@@ -150,7 +151,7 @@ Each row is an `HStack` with 12-point spacing, 8-point internal padding, a `seco
 - Tapping a row toggles a bordered **Copy** button on its trailing edge.
 - Only one row can expose its copy button at a time.
 - The appearance change is wrapped in `withAnimation`.
-- Copying closes the row action and reuses the green global copy-success message above the divider.
+- Copying closes the row action and displays the localized green copy-success message immediately below the history header for 1.5 seconds.
 
 Rows form a simple vertical stack with 8-point gaps. There are no dates, payload-type icons, swipe actions, disclosure destinations, or deduplication.
 
@@ -216,11 +217,13 @@ The current two languages use short labels that fit the three-button action row.
 
 ### 9.1 Device and orientation support
 
-The target supports iPhone and iPad. iPhone declares portrait and both landscape orientations; iPad also declares portrait upside down. The main screen uses a vertical `ScrollView`, which protects the fixed sequence from short vertical space.
+The target supports iPhone and iPad. iPhone declares portrait and both landscape orientations; iPad also declares portrait upside down. The two pages each use a vertical `ScrollView`, which protects their content from short vertical space, while the enclosing `TabView` reserves horizontal gestures for page changes.
 
 The implementation has no size-class branches, maximum readable width, `ViewThatFits`, adaptive grid, or alternate iPad composition. As a result:
 
-- The editor, segmented picker, divider, and history rows stretch across large windows.
+- The editor, segmented picker, and history rows stretch across large windows.
+- The generator and history keep independent vertical scroll positions while moving between pages.
+- The native page control stays at the bottom of the paged container, with content padding preventing overlap.
 - The QR preview remains fixed at 160 points and centered in the expanded width.
 - The primary actions remain one horizontal row.
 - The scanner buttons remain pinned to three safe-area corners.
@@ -250,4 +253,4 @@ Several visible experiences are owned by iOS and may change across OS versions:
 
 ## 11. Current design summary
 
-QrScan's UI prioritizes direct access and low navigation overhead. Its central design is a single scrollable tool surface with immediate QR regeneration, a visually emphasized scan action, and inline history. System components provide platform consistency and localization with little custom visual code. The tradeoff is that large-screen composition, Dynamic Type behavior, editor discoverability, history affordances, and scanner guidance remain minimal and are not specialized beyond the default adaptive behavior of SwiftUI and UIKit.
+QrScan's UI prioritizes direct access and low navigation overhead. Its central design is a two-page utility surface with immediate QR regeneration on the default page and scan history one horizontal swipe away. Native page indicators, controls, colors, and typography provide platform consistency and localization with little custom visual code. The tradeoff is that large-screen composition, Dynamic Type behavior, editor discoverability, history affordances, and scanner guidance remain minimal and are not specialized beyond the default adaptive behavior of SwiftUI and UIKit.

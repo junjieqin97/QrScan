@@ -8,27 +8,35 @@
 import XCTest
 
 final class QrScanUITests: XCTestCase {
-
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testSwipeBetweenGeneratorAndHistoryPages() throws {
         let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let pager = app.descendants(matching: .any)["home.page.pager"]
+        let editor = app.textViews["home.payload.editor"]
+        let pageIndicator = app.pageIndicators.firstMatch
+        let historyTitle = app.staticTexts["home.history.title"]
+        let clearHistoryButton = app.buttons["home.history.clear"]
+
+        XCTAssertTrue(pager.waitForExistence(timeout: 5))
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        XCTAssertTrue(editor.isHittable)
+        XCTAssertTrue(pageIndicator.waitForExistence(timeout: 5))
+        XCTAssertFalse(historyTitle.isHittable)
+
+        app.swipeLeft()
+
+        waitUntilHittable(historyTitle)
+        waitUntilHittable(clearHistoryButton)
+
+        app.swipeRight()
+
+        waitUntilHittable(editor)
     }
 
     @MainActor
@@ -37,5 +45,14 @@ final class QrScanUITests: XCTestCase {
         measure(metrics: [XCTApplicationLaunchMetric()]) {
             XCUIApplication().launch()
         }
+    }
+
+    @MainActor
+    private func waitUntilHittable(_ element: XCUIElement, timeout: TimeInterval = 5) {
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == true AND hittable == true"),
+            object: element
+        )
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
     }
 }
